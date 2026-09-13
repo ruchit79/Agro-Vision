@@ -1,0 +1,114 @@
+.container {
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(135deg, #0f766e 0%, #0891b2 50%, #1e40af 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem; /* ✅ ensures spacing on small screens */
+  box-sizing: border-box;
+}
+
+.formCon {
+  width: 100%;
+  max-width: 40rem; /* ✅ scales down on smaller screens */
+  height: auto;
+  padding: 2rem;
+  border-radius: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.05); /* optional: frosted look */
+}
+
+.title {
+  font-size: clamp(2rem, 5vw, 3.5rem); /* ✅ scales with screen */
+  font-weight: 900;
+  background: linear-gradient(135deg, #10b981, #06b6d4, #3b82f6);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+.subHed {
+  text-align: center;
+  font-size: 1rem;
+  color: #fff;
+  font-weight: 300;
+}
+
+.emoji {
+  font-size: clamp(2.5rem, 6vw, 4rem); /* ✅ scales emoji */
+}
+
+.inputCon {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;  /* ✅ center horizontally */
+  justify-content: center; /* ✅ center vertically inside formCon */
+  gap: 1.5rem;
+}
+
+
+.input {
+  width: 100%; /* ✅ full width responsive */
+  max-width: 24rem; /* ✅ keeps desktop look */
+  height: 3.5rem;
+  border-radius: 1rem;
+  background-color: #0891b2;
+  text-align: center;
+  font-weight: bold;
+  color: #fff;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.btn {
+  width: 100%;
+  max-width: 15rem; /* ✅ shrinks nicely */
+  height: 3rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #0f766e 0%, #0891b2 50%, #1e40af 100%);
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* 📌 Media Queries */
+@media (max-width: 768px) {
+  .formCon {
+    padding: 1.5rem;
+  }
+
+  .input {
+    height: 3rem;
+    font-size: 0.9rem;
+  }
+
+  .btn {
+    height: 2.8rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 2rem;
+  }
+
+  .emoji {
+    font-size: 2.5rem;
+  }
+
+  .input {
+    font-size: 0.85rem;
+  }
+
+  .btn {
+    font-size: 0.85rem;
+  }
+}

@@ -1,0 +1,174 @@
+.weatherDashboard {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 2rem;
+}
+
+.mainInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tempSection {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mainIcon {
+  color: #fbbf24;
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.4));
+}
+
+.tempValue {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: white;
+  line-height: 1;
+}
+
+.condition {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+.location {
+  border-left: 2px solid #10b981;
+  padding-left: 1rem;
+}
+
+.region {
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.status {
+  font-size: 0.75rem;
+  color: #34d399;
+  font-weight: 600;
+  margin: 0;
+}
+
+.vitalStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.vitalItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.vIcon {
+  color: #06b6d4;
+}
+
+.vLabel {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.vValue {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.soilStatus {
+  margin-bottom: 2rem;
+}
+
+.soilHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.soilLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.soilValue {
+  color: #3b82f6;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.progressTrack {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+}
+
+.tipCard {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 1rem;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.tipIcon {
+  color: #10b981;
+  flex-shrink: 0;
+}
+
+.tipText {
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .topRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  
+  .vitalStats {
+    width: 100%;
+  }
+}
