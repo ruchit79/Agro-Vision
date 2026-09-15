@@ -22,7 +22,7 @@ export const   Signup = async (req ,res)=>{
     }catch(error)
     {
       console.log("erorr in creating new user" , error);
-      res.status(500).json({error : error || "Internal Error"});
+      res.status(500).json({error : error?.message || "Internal Error"});
     }  
 
 }
@@ -42,7 +42,6 @@ export const login = async (req ,res) =>{
     }catch(error)
     {
         console.log(error);
-        console.log(error)
         res.status(500).json({error :error?.message || "Internal Error"});
     }
 }
