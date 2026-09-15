@@ -6,10 +6,7 @@ export const connectDb = async () => {
       throw new Error("MONGO_URL is not defined in .env file");
     }
 
-    const conn = await mongoose.connect(process.env.MONGO_URL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    const conn = await mongoose.connect(process.env.MONGO_URL);
 
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
