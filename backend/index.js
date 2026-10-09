@@ -38,7 +38,12 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
-
+// IMPORTANT: Parse request bodies BEFORE registering routes 
+app.use(express.json()); 
+app.use(express.urlencoded({ extended: true }));
+ // Register your routes AFTER the middleware
+ // Example: 
+ // app.use('/api/auth', authRouter);
 // Handle preflight OPTIONS requests for all routes
 
 
