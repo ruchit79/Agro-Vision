@@ -1,12 +1,23 @@
+import os
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["TF_NUM_INTRAOP_THREADS"] = "1"
+os.environ["TF_NUM_INTEROP_THREADS"] = "1"
+
+import gc
+import traceback
+from io import BytesIO
+
 from flask import Flask, request, jsonify
+import tensorflow as tf
 from tensorflow.keras.models import load_model
-# pyrefly: ignore [missing-import]
 from tensorflow.keras.preprocessing import image
 from PIL import Image, UnidentifiedImageError
 import numpy as np
-import os
-import traceback
-from io import BytesIO
+
+# Limit TensorFlow CPU threads to avoid high CPU/RAM usage on container hosts
+tf.config.threading.set_inter_op_parallelism_threads(1)
+tf.config.threading.set_intra_op_parallelism_threads(1)
 
 app = Flask(__name__)
 
@@ -17,8 +28,8 @@ MODEL_PATH = os.path.join(BASE_DIR, "model", "model.h5")
 # Limit uploads to 10 MB
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 
-# Load the trained model
-model = load_model(MODEL_PATH)
+# Load the trained model with compile=False to save memory (no optimizer/training graph needed)
+model = load_model(MODEL_PATH, compile=False)
 
 # Get the expected image dimensions from the model
 input_shape = model.input_shape
@@ -28,6 +39,7 @@ IMG_WIDTH = int(input_shape[2])
 print("Model loaded successfully")
 print("Expected model input shape:", input_shape)
 print("Image resize dimensions:", IMG_WIDTH, "x", IMG_HEIGHT)
+
 
 # Keep your existing 39 class labels here, unchanged.
 class_labels = [
@@ -111,8 +123,8 @@ def predict():
         # Add batch dimension: (1, height, width, 3)
         img_array = np.expand_dims(img_array, axis=0)
 
-        # Predict
-        predictions = model.predict(img_array, verbose=0)
+        # Predict using direct callable inference (faster and lower RAM than model.predict)
+        predictions = model(img_array, training=False).numpy()
 
         class_index = int(np.argmax(predictions[0]))
         confidence = float(np.max(predictions[0])) * 100
@@ -135,6 +147,10 @@ def predict():
             "cause": get_disease_cause(disease_name),
             "precaution": get_disease_precaution(disease_name)
         }
+
+        # Clear memory
+        del img, img_array, predictions
+        gc.collect()
 
         return jsonify(result), 200
 
