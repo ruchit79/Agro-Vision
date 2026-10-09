@@ -18,12 +18,29 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Middleware
+const allowedOrigins = [
+  'https://agrovision-frontend-seven.vercel.app',
+  'http://localhost:3000',
+  // add other trusted origins as needed
+];
+
 app.use(cors({
-  origin: true, // Automatically reflects the request origin (works for Vercel, localhost, etc.)
+  origin: (origin, callback) => {
+    // allow requests with no origin like mobile apps or curl
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+    return callback(new Error(msg), false);
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Handle preflight OPTIONS requests for all routes
+app.options('*', cors());
 
 
 // dbs configaration
