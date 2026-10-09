@@ -1,17 +1,21 @@
-import mongoose from "mongoose"; // ✅ fix typo: "moongoose" → "mongoose"
+const mongoose = require("mongoose");
 
-export const connectDb = async () => {
+async function connectDB() {
   try {
-    if (!process.env.MONGO_URL) {
-      throw new Error("MONGO_URL is not defined in .env file");
-    }
+    const connection = await mongoose.connect(
+      process.env.MONGODB_URI
+    );
 
-    const conn = await mongoose.connect(process.env.MONGO_URL);
-
-    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+    console.log(
+      `MongoDB connected: ${connection.connection.name}`
+    );
   } catch (error) {
-    console.error("❌ Error connecting to MongoDB:");
-    console.error(error.message);
-    process.exit(1); // stop server if DB fails
+    console.error(
+      "MongoDB connection failed:",
+      error.message
+    );
+    throw error;
   }
-};
+}
+
+module.exports = connectDB;
