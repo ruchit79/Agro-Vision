@@ -18,31 +18,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Middleware
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "https://agrovision-frontend-seven.vercel.app",
-  process.env.FRONTEND_URL
-].filter(Boolean);
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 
-// CORS configuration
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // allow requests with no origin (Postman, curl, mobile apps) or vercel deployments
-      if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
-        return callback(null, true);
-      }
-      return callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true, // important if you use cookies / auth headers
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
-
-app.use(express.json());
+// Express pre-flight handler for all routes
+app.options('*', cors());
 
 
 // dbs configaration
