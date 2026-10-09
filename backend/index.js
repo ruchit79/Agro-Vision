@@ -19,14 +19,11 @@ const __dirname = path.dirname(__filename);
 
 // Middleware
 app.use(cors({
-  origin: '*',
+  origin: true, // Automatically reflects the request origin (works for Vercel, localhost, etc.)
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
-
-// Express pre-flight handler for all routes
-app.options('*', cors());
 
 
 // dbs configaration
