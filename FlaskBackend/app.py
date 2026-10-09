@@ -11,7 +11,6 @@ from io import BytesIO
 from flask import Flask, request, jsonify
 import tensorflow as tf
 from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing import image
 from PIL import Image, UnidentifiedImageError
 import numpy as np
 
@@ -41,12 +40,13 @@ print("Expected model input shape:", input_shape)
 print("Image resize dimensions:", IMG_WIDTH, "x", IMG_HEIGHT)
 
 
-# Keep your existing 39 class labels here, unchanged.
+# 39 class labels in the exact order the model was trained (alphabetical order from dataset)
 class_labels = [
     'Apple___Apple_scab',
     'Apple___Black_rot',
     'Apple___Cedar_apple_rust',
     'Apple___Healthy',
+    'Background_without_leaves',
     'Blueberry___Healthy',
     'Cherry___Powdery_mildew',
     'Cherry___Healthy',
@@ -80,8 +80,7 @@ class_labels = [
     'Tomato___Target_Spot',
     'Tomato___Yellow_Leaf_Curl_Virus',
     'Tomato___mosaic_virus',
-    'Tomato___Healthy',
-    'Background_without_leaves'
+    'Tomato___Healthy'
 ]
 
 
@@ -113,8 +112,7 @@ def predict():
         img = img.resize((IMG_WIDTH, IMG_HEIGHT))
 
         # Convert image to NumPy array
-        img_array = image.img_to_array(img)
-        img_array = np.asarray(img_array, dtype=np.float32)
+        img_array = np.asarray(img, dtype=np.float32)
 
         # Preserve normalization used by your existing code.
         # This must match the preprocessing used during model training.
@@ -123,8 +121,8 @@ def predict():
         # Add batch dimension: (1, height, width, 3)
         img_array = np.expand_dims(img_array, axis=0)
 
-        # Predict using direct callable inference (faster and lower RAM than model.predict)
-        predictions = model(img_array, training=False).numpy()
+        # Predict
+        predictions = model.predict(img_array, verbose=0)
 
         class_index = int(np.argmax(predictions[0]))
         confidence = float(np.max(predictions[0])) * 100
@@ -136,7 +134,11 @@ def predict():
 
         predicted_class = class_labels[class_index]
 
-        plant_name, disease_name = predicted_class.split("___", 1)
+        if "___" in predicted_class:
+            plant_name, disease_name = predicted_class.split("___", 1)
+        else:
+            plant_name = "Non-Plant / Background"
+            disease_name = predicted_class
 
         result = {
             "plant": plant_name,
@@ -147,10 +149,6 @@ def predict():
             "cause": get_disease_cause(disease_name),
             "precaution": get_disease_precaution(disease_name)
         }
-
-        # Clear memory
-        del img, img_array, predictions
-        gc.collect()
 
         return jsonify(result), 200
 
@@ -187,6 +185,7 @@ def get_disease_description(disease):
         "Yellow_Leaf_Curl_Virus": "Viral disease causing upward curling, yellowing margins, and stunted growth.",
         "mosaic_virus": "Viral infection producing mottled light and dark green patterns and distorted leaves.",
         "Healthy": "No visible symptoms detected. The plant appears healthy and vigorous.",
+        "Background_without_leaves": "No plant foliage detected. The image appears to contain background objects or soil.",
     }
     cleaned = disease.replace("_", " ")
     return descriptions.get(disease, f"Symptoms associated with {cleaned}. Inspect foliage for lesions or discoloration.")
@@ -214,6 +213,7 @@ def get_treatment_recommendation(disease):
         "Yellow_Leaf_Curl_Virus": "Control whitefly vector populations using yellow sticky traps and insecticides. Remove infected plants.",
         "mosaic_virus": "No chemical cure. Remove and destroy infected plants. Sanitize tools and control aphid vectors.",
         "Healthy": "No treatment needed. Maintain optimal irrigation, nutrition, and pest monitoring.",
+        "Background_without_leaves": "Please upload a clear, well-lit, close-up photo of a plant leaf for disease diagnosis.",
     }
     cleaned = disease.replace("_", " ")
     return treatments.get(disease, f"Remove affected foliage, apply appropriate organic or chemical fungicides for {cleaned}, and maintain good sanitation.")
@@ -241,6 +241,7 @@ def get_disease_cause(disease):
         "Yellow_Leaf_Curl_Virus": "Caused by a Begomovirus, transmitted primarily by whiteflies (Bemisia tabaci).",
         "mosaic_virus": "Caused by Tobacco Mosaic Virus (TMV) or Tomato Mosaic Virus (ToMV).",
         "Healthy": "No pathogen detected. Physiological balance maintained.",
+        "Background_without_leaves": "Image does not appear to contain plant foliage or crop leaves.",
     }
     cleaned = disease.replace("_", " ")
     return causes.get(disease, f"Fungal, bacterial, or environmental stress factors associated with {cleaned}.")
@@ -268,6 +269,7 @@ def get_disease_precaution(disease):
         "Yellow_Leaf_Curl_Virus": "Use physical insect-proof mesh screens, reflective mulches, and plant resistant varieties.",
         "mosaic_virus": "Wash hands with soap and water before handling plants; disinfect tools thoroughly.",
         "Healthy": "Continue regular monitoring, balanced fertilization, and good soil hygiene.",
+        "Background_without_leaves": "Ensure the subject is centered, clear, well-lit, and in focus.",
     }
     cleaned = disease.replace("_", " ")
     return precautions.get(disease, f"Isolate affected plants, sanitize pruning tools, avoid excess leaf wetness, and practice crop rotation.")
