@@ -22,10 +22,11 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:5173",
   "http://localhost:5174",
+  "https://agrovision-frontend-seven.vercel.app",
   process.env.FRONTEND_URL
 ].filter(Boolean);
 
-// ✅ CORS configuration
+// CORS configuration
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -36,7 +37,7 @@ app.use(
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true, // important if you use cookies / auth headers
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
